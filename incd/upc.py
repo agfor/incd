@@ -1,12 +1,10 @@
-from .incd import INCD
+from .mod import ModBase
 
-class UPC(INCD):
-    def calculate_check_digit(self, number: str):
+class UPC(ModBase):
+    TESTS = ["043000126110", "043000102107"]
+    LENGTH = 12
+    def check_digit(self, number: str):
         digits = [int(d) for d in number]
         even = sum(digits[::2]) * 3
         odd = sum(digits[1::2])
-        return -1 * (odd + even) % 10
-
-    def is_number_valid(self, number: str):
-        assert len(number) == 12
-        return self.calculate_check_digit(number[:-1]) == number[-1]
+        return -(odd + even) % 10

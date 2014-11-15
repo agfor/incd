@@ -58,6 +58,8 @@ def return_input_type(func):
         return result
     return input_returning_func
 
+REGISTRY = []
+
 class INCDMeta(ABCMeta):
     "Wraps the input and output types of required methods for classes not marked as ignored"
     def __new__(cls, name, bases, namespace, **kwargs):
@@ -70,25 +72,32 @@ class INCDMeta(ABCMeta):
         result = super().__new__(cls, name, bases, namespace, **kwargs)
 
         if not ignore:
-            result.calculate_check_digit = return_input_type(convert_input(result.calculate_check_digit))
-            result.is_number_valid = convert_input(result.is_number_valid)
+            result.check_digit = return_input_type(convert_input(result.check_digit))
+            result.is_valid = convert_input(result.is_valid)
+            REGISTRY.append(result)
+
         return result
+
+def test():
+    for cls in REGISTRY:
+        tests = getattr(cls, 'TESTS', [])
+        print(cls.__name__, "- {} Tests".format(len(tests)))
+        for test in tests:
+            print(test)
+            assert cls().is_valid(test) == True
 
 class INCD(metaclass=INCDMeta):
     "Describes required methods of INCD classes and provides convenience methods"
     INCD_IGNORE = True
     @abstractmethod
-    def is_number_valid(self, number):
+    def is_valid(self, number):
         pass
 
     @abstractmethod
-    def calculate_check_digit(self, number):
+    def check_digit(self, number):
         pass
 
     @return_input_type
     @convert_input
     def number_with_check_digit(self, number: str):
-        return number + self.calculate_check_digit(number)
-
-    def verify_cycle(self, number):
-        return self.is_number_valid(self.number_with_check_digit(number)) == True
+        return number + self.check_digit(number)
