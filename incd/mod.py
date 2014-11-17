@@ -3,7 +3,7 @@ from .incd import INCD
 class ModBase(INCD):
     INCD_IGNORE = True
     LENGTH = None
-    def is_valid(self, number: str) -> bool:
+    def is_valid(self, number: str) -> bool
         if self.LENGTH:
             assert len(number) == self.LENGTH
         return self.check_digit(number[:-1]) == number[-1]

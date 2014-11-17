@@ -6,5 +6,6 @@ from .luhn10 import Luhn10
 from .isbn import ISBN10, ISBN13
 from .vin import VehicleIdentificationNumber
 from .damm import Damm
+from .verhoeff import Verhoeff
 
 from .incd import test
